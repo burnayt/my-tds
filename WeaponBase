@@ -20,6 +20,7 @@ public class WeaponBase : MonoBehaviour {
 	public int maxBulletsInCage = 100; //патронов в обойме максимально
 	public int bulletsTotal = 500; // всего патронов данного типа
 	protected int bulletsLeftInCage = 0; // патронов осталось в обойме
+	protected string weaponName = "Pistol"; //Имя оружия - используеться для нахождения соответствий между оружием и боеприпасом
 
 	// Use this for initialization
 	protected void Start () 
@@ -115,5 +116,13 @@ public class WeaponBase : MonoBehaviour {
 	{
 		//Ну, можно начать перезарядку если патронов нет
 		// Reload()
+	}
+	
+	public void AmmoTaken( string ammoName, int amount)
+	{
+		if( ammoName == weaponName ) 
+		{
+			bulletsTotal += amount;
+		}
 	}
 }
