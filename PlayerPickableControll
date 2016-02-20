@@ -1,0 +1,30 @@
+using UnityEngine;
+using System.Collections;
+
+public class PlayerPickableControll : MonoBehaviour {
+
+	public PlayerWeaponControl weaponControl;
+	// Use this for initialization
+	void Start () {
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		if( Input.GetButtonDown("Use") )
+		{
+			Collider[] cols = Physics.OverlapSphere(transform.position, 0.5f );
+			foreach(Collider col in cols)
+			{
+				if( col.name == "PistolPickUp" )
+				{
+					Debug.Log(col.GetComponent<WeaponPickable>().weapon ); 
+
+
+					weaponControl.SetWeapon( col.GetComponent<WeaponPickable>().weapon );
+				}
+			}
+		}
+	}
+}
