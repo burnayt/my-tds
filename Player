@@ -1,0 +1,53 @@
+using UnityEngine;
+using System.Collections;
+
+public class Player : MonoBehaviour 
+{
+	public float health = 10;
+	public float moveSpeed = 6;
+
+	public CharacterController cc;
+	public Camera myCamera;
+
+	// Use this for initialization
+	void Start () 
+	{
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		MoveInputProcessing();
+		PlayerRotation();
+	
+	}
+
+	public void MoveInputProcessing()
+	{
+		Vector3 moveInput = new Vector3 ( Input.GetAxisRaw ("Horizontal"), 0, Input.GetAxisRaw ("Vertical") );
+		Vector3 direction = moveInput.normalized * moveSpeed;
+		cc.Move( direction * Time.deltaTime );
+
+	}
+
+	public void PlayerRotation()
+	{
+		Ray ray = myCamera.ScreenPointToRay( Input.mousePosition );
+		Plane groundPlane = new Plane ( Vector3.up, transform.position );
+		float rayDistance;
+		
+		if( groundPlane.Raycast(ray, out rayDistance) )
+		{
+			Vector3 lookPoint = ray.GetPoint (rayDistance);
+			
+			transform.LookAt (lookPoint);
+		}
+	}
+
+
+	public void BeingHit(float damage)
+	{
+		health -= damage;
+	}
+}
