@@ -1,0 +1,44 @@
+using UnityEngine;
+using System.Collections;
+
+public class EnemyRespawnWithSpots : MonoBehaviour 
+{
+	public GameObject enemyPrefab;
+
+	public Transform[] respawnSpots;
+
+	public float delayBetweenEnemies = 1f;
+	
+	private float lastEnemyRespawn; 
+
+	private Transform currentRespawnSpot;
+
+	// Use this for initialization
+	void Start () {
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		RespawnEnemy();
+	}
+
+	public Transform ChooseRespawnSpot()
+	{
+		int spotNumber = Random.Range( 0, respawnSpots.Length - 1);
+		return respawnSpots[spotNumber];
+	}
+
+	public void RespawnEnemy()
+	{
+		if (lastEnemyRespawn + delayBetweenEnemies <= Time.time)
+		{
+
+			lastEnemyRespawn = Time.time;
+
+			currentRespawnSpot = ChooseRespawnSpot();
+			Instantiate ( enemyPrefab, currentRespawnSpot.position, Quaternion.identity );
+		}
+	}
+}
