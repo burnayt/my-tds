@@ -1,0 +1,51 @@
+using UnityEngine;
+using System.Collections;
+
+public class AgentMovementControll : MonoBehaviour {
+
+	public Transform target;
+	public float pathCalculatedPeriod = 1f;
+	public NavMeshAgent agent;
+	
+	// Use this for initialization
+	void Start () {
+		StartCoroutine( Moving() );
+	}
+
+	void Update()
+	{
+		Debug.Log( (transform.position - target.position).magnitude );
+	}
+	private void DefineAgentPeriod()
+	{
+		if( (transform.position - target.position).magnitude >= 29)
+		{
+			pathCalculatedPeriod = 1f;
+		}
+		else if( (transform.position - target.position).magnitude >= 15 )
+		{
+			pathCalculatedPeriod = 0.75f;
+		}
+		else if ( (transform.position - target.position).magnitude >= 7 )
+		{
+			pathCalculatedPeriod = 0.5f;
+		}
+		else if ( (transform.position - target.position).magnitude >= 3 )
+		{
+			pathCalculatedPeriod = 0.25f;
+		}
+		else 
+		{
+			pathCalculatedPeriod = 0.03f;
+		}
+	}
+	private IEnumerator Moving()
+	{
+		while ( true )
+		{
+			DefineAgentPeriod();
+			agent.SetDestination( target.position );
+			yield return new WaitForSeconds(pathCalculatedPeriod);
+		}
+	}
+}
