@@ -1,0 +1,23 @@
+using UnityEngine;
+using System.Collections;
+
+public class EnemyEndurance : MonoBehaviour, IHitable
+{
+	public int health = 10;
+	
+	public void Hit ( int damage )
+	{
+		health -= damage;
+		if ( health<=0 )
+		{
+			Dead();
+		}
+	}
+
+	private void Dead()
+	{
+		//GetComponent<SimpleItemDropper>().Drop(transform.position);
+		Destroy(gameObject);
+	}
+
+}
