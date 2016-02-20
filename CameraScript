@@ -1,0 +1,29 @@
+using UnityEngine;
+using System.Collections;
+
+public class CameraScript : MonoBehaviour 
+{
+	public Transform target;
+	public float speed = 0.6f;
+
+	private Vector3 vector;
+	// Use this for initialization
+	void Start () 
+	{
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		//transform.position = new Vector3 ( target.position.x, target.position.y + 16, target.position.z );
+
+
+	}
+
+	void LateUpdate()
+	{
+		vector = new Vector3( target.position.x, transform.position.y, target.position.z );
+		transform.position = Vector3.Lerp ( transform.position, vector, speed );
+	}
+}
