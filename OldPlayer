@@ -1,0 +1,165 @@
+using UnityEngine;
+using System.Collections;
+
+public class Player : MonoBehaviour , IHitable
+{
+
+	//MODEL
+
+	//VIEWER
+
+	//CONTROLLER
+	//[NoNSerializable]
+	public static Player self;
+
+	public float moveSpeed = 5;
+	public int currentHealth = 10;
+
+	private Rigidbody rbody;
+	private Camera myCamera;
+
+	private Vector3 direction;
+	public WeaponBase currentWeapon;
+	public WeaponBase[] weapons;
+	public bool isAutomatPickedUp = false;
+
+	private Transform weaponSlot;
+
+
+
+	// Use this for initialization
+	void Start () 
+	{
+		rbody = GetComponent<Rigidbody>();
+		myCamera = Camera.main;
+
+		self = this;
+
+		//weapons = new WeaponBase[2];
+
+		currentWeapon = weapons[0];
+
+		//Debug.Log(self);
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		MoveInputProcessing();
+
+		PlayerRotation();
+
+		if ( Input.GetButton( "Fire1") )
+		{
+			currentWeapon.Shoot();
+		}
+		else if(Input.GetButtonDown("Reload") )
+		{
+			currentWeapon.Reload();
+		}
+		else if ( Input.GetButtonDown("ChangeWeapon") )
+		{
+			ChangeWeapon();
+		}
+	}
+
+	void FixedUpdate()
+	{
+		rbody.MovePosition( rbody.position + direction* Time.fixedDeltaTime );
+	}
+
+	void OnGUI()
+	{
+		GUILayout.TextField( currentWeapon.GetStatus() );
+	}
+
+	void OnTriggerEnter (Collider other)
+	{
+		/*
+		if ( other.GetComponent<WeaponPickable>() == null )
+		{		
+			return;
+		}
+		*/
+
+		if( other.GetComponent<WeaponPickable>() != null && other.GetComponent<WeaponPickable>().nameOfPickable == "Automat")
+		{
+			isAutomatPickedUp = true;
+		}
+
+		if( other.GetComponent<AmmoPickable>() != null )
+		{
+			currentWeapon.AmmoTaken( other.GetComponent<AmmoPickable>().caliber, other.GetComponent<AmmoPickable>().amount );
+
+		}
+
+	}
+
+	public void PickUpWeapon(GameObject weapon)
+	{
+		GameObject weaponPickedUp = Instantiate(weapon, weaponSlot.position, Quaternion.identity ) as GameObject;
+
+	}
+	public void MoveInputProcessing()
+	{
+		Vector3 moveInput = new Vector3 ( Input.GetAxisRaw ("Horizontal"), 0, Input.GetAxisRaw ("Vertical") );
+		direction = moveInput.normalized * moveSpeed;
+	}
+
+	public void PlayerRotation()
+	{
+		Ray ray = myCamera.ScreenPointToRay( Input.mousePosition );
+		Plane groundPlane = new Plane ( Vector3.up, transform.position );
+		float rayDistance;
+		
+		if( groundPlane.Raycast(ray, out rayDistance) )
+		{
+			Vector3 lookPoint = ray.GetPoint (rayDistance);
+
+			transform.LookAt (lookPoint);
+		}
+	}
+
+	public void Hit ( int amount )
+	{
+		currentHealth -= amount;
+		if ( currentHealth <= 0)
+		{
+			Dead();
+		}
+	}
+
+	public void ChangeWeapon()
+	{
+		if ( currentWeapon == weapons[0] && isAutomatPickedUp )
+		{
+			currentWeapon = weapons[1];
+			weapons[0].SwitchWeaponOut();
+			weapons[0].gameObject.SetActive (false);
+			weapons[1].gameObject.SetActive (true);
+		}
+		else if ( currentWeapon == weapons[1] )
+		{
+			currentWeapon = weapons[0];
+			weapons[1].SwitchWeaponOut();
+			weapons[1].gameObject.SetActive (false);
+			weapons[0].gameObject.SetActive (true);
+		}
+	}
+
+	public Vector3 GetPosition()
+	{
+		return transform.position;
+	}
+
+	public Vector3 GetDirection()
+	{
+		return transform.forward;
+	}
+
+	private void Dead()
+	{
+
+	}
+}
