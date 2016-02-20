@@ -3,12 +3,15 @@ using System.Collections;
 
 public class WeaponBase : MonoBehaviour {
 
+
+
 	//Prefab for bullets
 	public GameObject projectile;
 
 	//Slots
 	public Transform weaponSlot;	
 	public Transform projectileSlot;
+	public SpriteRenderer weaponSprite;
 
 	//Rate of fire controlled by this vars
 	public float delayBetweenShots = 1; // секунд между выстрелами
@@ -20,10 +23,10 @@ public class WeaponBase : MonoBehaviour {
 	public int maxBulletsInCage = 100; //патронов в обойме максимально
 	public int bulletsTotal = 500; // всего патронов данного типа
 	protected int bulletsLeftInCage = 0; // патронов осталось в обойме
-	protected string weaponName = "Pistol"; //Имя оружия - используеться для нахождения соответствий между оружием и боеприпасом
+	protected string caliber = ""; //Имя оружия - используеться для нахождения соответствий между оружием и боеприпасом
 
 	// Use this for initialization
-	protected void Start () 
+	protected virtual void Start () 
 	{
 		weaponSlot = GameObject.Find("WeaponSlot").transform;
 		projectileSlot = GameObject.Find("ProjectileSlot").transform; 
@@ -96,31 +99,37 @@ public class WeaponBase : MonoBehaviour {
 
 	public string GetStatus()
 	{
+		string output = "";
+		output += caliber + " ";
 		if(isReloading)
 		{
-			return "R E L O A D I N G";
+			output += "R E L O A D I N G";
 		}
 		else
 		{
-			return bulletsLeftInCage + " / " + bulletsTotal;
+			output += bulletsLeftInCage + " / " + bulletsTotal;
 		}
+
+		return output;
 	}
 
 	public void SwitchWeaponOut()
 	{
 		StopCoroutine(ReloadProcess());
 		isReloading = false;
+		weaponSprite.enabled = false;
 	}
 
 	public void SwitchWeaponOnThis()
 	{
 		//Ну, можно начать перезарядку если патронов нет
 		// Reload()
+		weaponSprite.enabled = true;
 	}
-	
+
 	public void AmmoTaken( string ammoName, int amount)
 	{
-		if( ammoName == weaponName ) 
+		if( ammoName == caliber ) 
 		{
 			bulletsTotal += amount;
 		}
