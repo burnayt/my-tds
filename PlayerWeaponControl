@@ -1,0 +1,61 @@
+using UnityEngine;
+using System.Collections;
+
+public class PlayerWeaponControl : MonoBehaviour 
+{
+	public WeaponBase[] weapons;
+	public Transform weaponSlot;
+
+	public int activeWeaponIndex = 0;
+
+	public GameObject nullWeaponPrefab;
+
+	// Use this for initialization
+	void Start () 
+	{
+		weapons = new WeaponBase[2];
+		for(int i=0; i < 2; i++)
+		{
+			activeWeaponIndex = i;
+			SetWeapon(nullWeaponPrefab);
+		}
+
+		activeWeaponIndex = 0;
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		if( Input.GetButtonDown("Change Weapon") )
+		{
+			ChangeWeapon();
+		}
+	}
+
+	public void ChangeWeapon()
+	{
+		weapons[activeWeaponIndex].SwitchWeaponOut();
+
+		activeWeaponIndex += 1;
+
+		if(activeWeaponIndex >= weapons.Length)
+		{
+			activeWeaponIndex = 0;
+		}
+
+		weapons[activeWeaponIndex].SwitchWeaponOnThis();
+	}
+
+	public void SetWeapon ( GameObject weapon )
+	{
+		GameObject newWeapon = Instantiate(weapon, transform.position, weaponSlot.rotation) as GameObject;
+		newWeapon.transform.parent = weaponSlot.transform; 
+
+		if( weapons[activeWeaponIndex] != null )
+		{
+			Destroy ( weapons[activeWeaponIndex].gameObject );
+		}
+		weapons[activeWeaponIndex] = newWeapon.GetComponent<WeaponBase>();
+
+	}
+}
