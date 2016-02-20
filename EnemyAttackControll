@@ -1,0 +1,33 @@
+using UnityEngine;
+using System.Collections;
+
+public class EnemyAttackControll : MonoBehaviour {
+
+	public Player target;
+
+	public float damage = 1f;
+	public float attackRate = 1.5f;
+
+	private float lastAttackTime;
+	// Use this for initialization
+	void Start () 
+	{
+		lastAttackTime = Time.time - attackRate;
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		if ( lastAttackTime + attackRate >= Time.time )
+		{
+			return;
+		}
+
+		if( (target.transform.position - transform.position).magnitude <= 1.5f )
+		{
+			target.BeingHit (damage);
+			lastAttackTime = Time.time;
+		}
+	
+	}
+}
