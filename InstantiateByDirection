@@ -1,0 +1,34 @@
+using UnityEngine;
+using System.Collections;
+
+public class InstantiateByDirection : MonoBehaviour 
+{
+	public Player player;
+	public GameObject testPrefab;
+	public float distance = 1;
+
+	// Use this for initialization
+	void Start () {
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		if ( Input.GetButtonDown ("Fire2") )
+		{
+			Test ();
+		}
+	
+	}
+
+	private void Test()
+	{
+		Vector3 plPosition = player.GetPosition();
+		Vector3 plDirection = player.GetDirection();
+
+		Vector3 prefabPosition = plPosition + plDirection * distance;
+
+		Instantiate (testPrefab, prefabPosition, Quaternion.identity);
+	}
+}
