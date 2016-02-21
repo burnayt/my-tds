@@ -1,0 +1,25 @@
+using UnityEngine;
+using System.Collections;
+
+public class AmmoPickable : MonoBehaviour 
+{
+	public string caliber = "9mm";
+	public int amount = 0;
+	public bool isRandomAmount = true;
+
+	void Start()
+	{
+		if ( isRandomAmount )
+		{
+			amount = Random.Range ( 5, 10);
+		}
+	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		if(other.gameObject.name == "Player")
+		{
+			Destroy(gameObject);
+		}
+	}
+}
