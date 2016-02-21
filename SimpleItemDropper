@@ -1,0 +1,18 @@
+using UnityEngine;
+using System.Collections;
+
+public class SimpleItemDropper : MonoBehaviour 
+{
+	public GameObject item;
+	public int dropChance = 6; //Drop chance between 1 & 10;
+
+	public void Drop ( Vector3 position )
+	{
+		if ( Random.Range(1, 10) > dropChance )
+		{
+			Instantiate(item, position, Quaternion.identity);
+		}
+	}
+	
+
+}
