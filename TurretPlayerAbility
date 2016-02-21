@@ -1,0 +1,53 @@
+using UnityEngine;
+using System.Collections;
+
+public class TurretPlayerAbility : MonoBehaviour, IAbilitable 
+{
+	public GameObject turret;
+	public float distance = 1;
+	public float cooldown = 15f;
+	public bool isReady = true;
+
+	public float cooldownTimeRemaining;
+
+	private float lastTimeActivated;
+	// Use this for initialization
+
+	void Start () 
+	{
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		
+	}
+
+	public void Execute()
+	{
+		if(!isReady)
+		{
+			return;
+		}
+		Player pl = GameObject.Find ("Player").GetComponent<Player>();
+		Instantiate ( turret, pl.GetPosition() + pl.GetDirection() * distance, Quaternion.identity );
+		isReady = false;
+		StartCoroutine ( "CooldownPasses" );
+	}
+
+	IEnumerator CooldownPasses()
+	{
+		cooldownTimeRemaining = cooldown;
+
+		while( cooldownTimeRemaining > 0)
+		{
+			yield return new WaitForSeconds(1f);
+
+			cooldownTimeRemaining -= 1;
+		}
+
+		isReady = true;
+
+	}
+}
