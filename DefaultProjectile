@@ -1,0 +1,41 @@
+using UnityEngine;
+using System.Collections;
+
+public class DefaultProjectile : MonoBehaviour 
+{
+	public float speed = 5;
+	public int damage = 1;
+	public float destroyDelay = 2.5f;
+
+	private Rigidbody rbody;
+	// Use this for initialization
+	void Start () 
+	{
+		rbody = GetComponent<Rigidbody>();
+		Destroy (gameObject , destroyDelay );
+
+	}
+	
+	// Update is called once per frame
+	void FixedUpdate () 
+	{
+		//rbody.;
+	}
+
+	void Update()
+	{
+		transform.Translate(Vector3.forward * Time.deltaTime * speed);
+	}
+
+	void OnCollisionEnter ( Collision collision)
+	{
+		IHitable hitObject = collision.gameObject.GetComponent<IHitable>();
+		if ( hitObject != null )
+		{
+			hitObject.Hit(damage);
+		}
+		Destroy ( gameObject );
+
+	
+	}
+}
