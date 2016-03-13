@@ -3,15 +3,56 @@ using System.Collections;
 
 public class SimpleItemDropper : MonoBehaviour 
 {
-	public GameObject item;
-	public int dropChance = 6; //Drop chance between 1 & 10;
+	public GameObject[] items;
+
+	public int[] coefficients;
+
+	void Start()
+	{
+		Drop(transform.position);
+	}
+
 
 	public void Drop ( Vector3 position )
 	{
-		if ( Random.Range(1, 10) > dropChance )
+		int result = SumOfCoefficients();
+
+		int chance = Random.Range(0, result);
+
+
+		int lowerChance = 0;
+		int upperChance = 0;
+
+		for (int i = 0; i < coefficients.Length; i++) 
 		{
-			Instantiate(item, position, Quaternion.identity);
+			lowerChance += coefficients[ i == 0 ? 0 : i - 1 ]; 
+
+
+			upperChance += coefficients[i];
+
+			if( chance >= lowerChance && chance < upperChance ) // chance < upperChance, а не "=>" иначе повышаеться шанс каждого кроме последнего
+			{
+				if(items[i].name != "NullItem")
+				{
+					Instantiate(items[i], position, Quaternion.identity);
+				}
+
+				return;
+
+			}
 		}
+
+	}
+
+	private int SumOfCoefficients()
+	{
+		int result = 0;
+
+		foreach( int chance in coefficients )
+		{
+			result += chance;
+		}
+		return result;
 	}
 	
 
