@@ -9,7 +9,7 @@ public class SimpleItemDropper : MonoBehaviour
 
 	void Start()
 	{
-		Drop(transform.position);
+		
 	}
 
 
