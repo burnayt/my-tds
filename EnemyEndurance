@@ -4,6 +4,7 @@ using System.Collections;
 public class EnemyEndurance : MonoBehaviour, IHitable
 {
 	public int health = 10;
+	public SimpleItemDropper dropper;
 	
 	public void Hit ( int damage )
 	{
@@ -16,7 +17,7 @@ public class EnemyEndurance : MonoBehaviour, IHitable
 
 	private void Dead()
 	{
-		//GetComponent<SimpleItemDropper>().Drop(transform.position);
+		dropper.Drop(transform.position);
 		Destroy(gameObject);
 	}
 
