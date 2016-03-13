@@ -3,7 +3,8 @@ using System.Collections;
 
 public class RespawnerSV : MonoBehaviour 
 {
-  //Респавнит волнами кол-ом wavesNumber по enemyInWaveNumber врагов в каждой
+	//Респавнит волнами кол-ом wavesNumber по enemyInWaveNumber врагов в каждой
+
 	public Transform[] spots;		//Точки респавна
 	public GameObject enemyPrefab;
 	public int wavesNumber; 		// Кол-во волн
