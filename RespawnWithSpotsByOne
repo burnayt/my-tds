@@ -3,6 +3,7 @@ using System.Collections;
 
 public class EnemyRespawnWithSpots : MonoBehaviour 
 {
+	//Респавнит по 1 за раз через время delayBetweenEnemies
 	public GameObject enemyPrefab;
 
 	public Transform[] respawnSpots;
