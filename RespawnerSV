@@ -1,0 +1,62 @@
+using UnityEngine;
+using System.Collections;
+
+public class RespawnerSV : MonoBehaviour 
+{
+  //Респавнит волнами кол-ом wavesNumber по enemyInWaveNumber врагов в каждой
+	public Transform[] spots;		//Точки респавна
+	public GameObject enemyPrefab;
+	public int wavesNumber; 		// Кол-во волн
+	public int enemyInWaveNumber; 	//Кол-во врагов в волне
+
+	public float wavePeriod = 15f; 	// Временной период между волнами
+
+	// Use this for initialization
+	void Start () 
+	{
+		StartCoroutine(WaveCycle());
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+			
+	}
+
+	private IEnumerator WaveCycle()
+	{
+		int wavesElapsed = 0;
+
+		while( wavesElapsed < wavesNumber )
+		{
+			if( wavesElapsed > 0 )
+			{
+				yield return new WaitForSeconds(wavePeriod);
+			}
+
+			//Пришло время новой волны
+				
+			int enemyRespawnLeft = enemyInWaveNumber;
+			
+			while(enemyRespawnLeft > 0)
+			{
+				foreach ( Transform spot in spots )
+				{
+					if( enemyRespawnLeft > 0 )
+					{
+						Instantiate ( enemyPrefab, spot.position, spot.rotation );
+						enemyRespawnLeft -= 1;
+					}
+					
+				}
+
+				yield return new WaitForSeconds(1f);
+
+			}
+
+			wavesElapsed += 1;
+		
+		}
+	}
+
+}
