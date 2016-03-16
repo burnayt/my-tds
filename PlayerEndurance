@@ -1,0 +1,32 @@
+using UnityEngine;
+using System.Collections;
+
+public class : MonoBehaviour 
+{
+	public int health = 100;
+
+	// Use this for initialization
+	void Start () {
+	
+	}
+	
+	// Update is called once per frame
+	void Update () {
+	
+	}
+
+	public void BeingHit(int damage)
+	{
+		health -= damage;
+
+		if ( health <= 0 )
+		{
+			Dead ();
+		}
+	}
+
+	private void Dead()
+	{
+
+	}
+}
