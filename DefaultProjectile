@@ -16,12 +16,6 @@ public class DefaultProjectile : MonoBehaviour
 
 	}
 	
-	// Update is called once per frame
-	void FixedUpdate () 
-	{
-		//rbody.;
-	}
-
 	void Update()
 	{
 		transform.Translate(Vector3.forward * Time.deltaTime * speed);
