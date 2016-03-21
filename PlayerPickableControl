@@ -27,4 +27,12 @@ public class PlayerPickableControl : MonoBehaviour {
 			}
 		}
 	}
+	
+	void OnTriggerEnter ( Collider other )
+	{
+		if(other.GetComponent<AmmoPickable>() != null)
+		{
+			weaponControl.TakeAmmo( other.GetComponent<AmmoPickable>() );
+		}
+	}
 }
