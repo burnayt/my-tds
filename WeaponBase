@@ -1,6 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
+public enum AmmoType
+{
+	_9mm
+}
 public class WeaponBase : MonoBehaviour {
 
 
@@ -23,7 +27,7 @@ public class WeaponBase : MonoBehaviour {
 	public int maxBulletsInCage = 100; //патронов в обойме максимально
 	public int bulletsTotal = 500; // всего патронов данного типа
 	protected int bulletsLeftInCage = 0; // патронов осталось в обойме
-	protected string caliber = ""; //Имя оружия - используеться для нахождения соответствий между оружием и боеприпасом
+	public AmmoType caliber; //Имя оружия - используеться для нахождения соответствий между оружием и боеприпасом
 
 	// Use this for initialization
 	protected virtual void Start () 
@@ -127,9 +131,9 @@ public class WeaponBase : MonoBehaviour {
 		weaponSprite.enabled = true;
 	}
 
-	public void AmmoTaken( string ammoName, int amount)
+	public void AmmoTaken( AmmoType type, int amount)
 	{
-		if( ammoName == caliber ) 
+		if( type == caliber ) 
 		{
 			bulletsTotal += amount;
 		}
