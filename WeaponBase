@@ -1,46 +1,49 @@
 using UnityEngine;
 using System.Collections;
 
-public enum AmmoType
-{
-	_9mm
-}
 public class WeaponBase : MonoBehaviour {
-
-
-
-	//Prefab for bullets
+	
+		//Prefab for bullets
 	public GameObject projectile;
-
+	
 	//Slots
 	public Transform weaponSlot;	
 	public Transform projectileSlot;
 	public SpriteRenderer weaponSprite;
-
+	
 	//Rate of fire controlled by this vars
 	public float delayBetweenShots = 1; // секунд между выстрелами
 	protected float timeLastShot = 0;
-
+	
 	//Reload controlled by this vars
 	public float reloadTime = 1.5f; //in seconds
 	public bool isReloading = false;
 	public int maxBulletsInCage = 100; //патронов в обойме максимально
 	public int bulletsTotal = 500; // всего патронов данного типа
 	protected int bulletsLeftInCage = 0; // патронов осталось в обойме
-	public AmmoType caliber; //Имя оружия - используеться для нахождения соответствий между оружием и боеприпасом
+	public AmmoType caliber ; //Имя оружия - используеться для нахождения соответствий между оружием и боеприпасом
 
+	//OPTIMIZATION
+	private int bulletsLeftInCageOld; // GetStatus() optimization
+	private int bulletsTotalOld; // GetStatus() optimization
+	string output = ""; // GetStatus() optimization
+	
 	// Use this for initialization
 	protected virtual void Start () 
 	{
 		weaponSlot = GameObject.Find("WeaponSlot").transform;
-		projectileSlot = GameObject.Find("ProjectileSlot").transform; 
+
+		if(projectileSlot == null )
+		{
+			projectileSlot = GameObject.Find("ProjectileSlot").transform; 
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
+		
 	}
-
+	
 	public  void Shoot()
 	{
 		if( isReloading )
@@ -48,26 +51,26 @@ public class WeaponBase : MonoBehaviour {
 			//Идет перезарядка
 			return;
 		}
-
+		
 		if( bulletsLeftInCage <= 0 )
 		{
 			//патронов в обойме не осталось - стрелять нечем
 			Reload();
 			return;
 		}
-
+		
 		if ( timeLastShot + delayBetweenShots <= Time.time )
 		{
-
+			
 			timeLastShot = Time.time;
-
+			
 			//Выносим 2 var ниже в отдельную функцию которая управляет разбросом и кол-ом появляющихся пуль
 			bulletsLeftInCage -= 1;
 			Instantiate ( projectile, projectileSlot.position, projectileSlot.rotation );
-
+			
 		}
 	}
-
+	
 	public void Reload()
 	{
 		if( isReloading || ( bulletsLeftInCage == 0 && bulletsTotal == 0 ) )
@@ -75,15 +78,15 @@ public class WeaponBase : MonoBehaviour {
 			//уже перезаряжаемся или патронов нет
 			return;
 		}
-
+		
 		StartCoroutine( ReloadProcess() );
 	}
 	protected IEnumerator ReloadProcess()
 	{
 		isReloading = true;
-
+		
 		yield return new WaitForSeconds ( reloadTime );
-
+		
 		bulletsTotal += bulletsLeftInCage;
 		bulletsLeftInCage = 0;
 		if ( bulletsTotal >= maxBulletsInCage )
@@ -96,46 +99,50 @@ public class WeaponBase : MonoBehaviour {
 			maxBulletsInCage = bulletsTotal;
 			bulletsTotal = 0;
 		}
-
+		
 		isReloading = false;
-
+		
 	}
-
+	
 	public string GetStatus()
 	{
-		string output = "";
-		output += caliber + " ";
 		if(isReloading)
 		{
-			output += "R E L O A D I N G";
+			output = caliber + " R E L O A D I N G ";
 		}
-		else
+		else if (bulletsTotal != bulletsTotalOld || bulletsLeftInCage != bulletsLeftInCageOld)
 		{
-			output += bulletsLeftInCage + " / " + bulletsTotal;
+			output = caliber + " " + bulletsLeftInCage + " / " + bulletsTotal;
+			bulletsTotalOld = bulletsTotal;
+			bulletsLeftInCageOld = bulletsLeftInCage;
+			//Debug.Log ("Bullets left in cage: " + bulletsLeftInCage + " / " + "Bullets left in cage old: " + bulletsLeftInCageOld);
 		}
 
 		return output;
 	}
-
+	
 	public void SwitchWeaponOut()
 	{
 		StopCoroutine(ReloadProcess());
 		isReloading = false;
 		weaponSprite.enabled = false;
 	}
-
+	
 	public void SwitchWeaponOnThis()
 	{
 		//Ну, можно начать перезарядку если патронов нет
 		// Reload()
 		weaponSprite.enabled = true;
 	}
-
-	public void AmmoTaken( AmmoType type, int amount)
+	
+	public bool TakeAmmo( AmmoType ammoType, int amount )
 	{
-		if( type == caliber ) 
+		if( ammoType == caliber ) 
 		{
 			bulletsTotal += amount;
+			return true;
 		}
+
+		return false;
 	}
 }
