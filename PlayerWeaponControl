@@ -73,4 +73,9 @@ public class PlayerWeaponControl : MonoBehaviour
 		weapons[activeWeaponIndex] = newWeapon.GetComponent<WeaponBase>();
 		
 	}
+	
+	void OnGUI()
+	{
+		GUILayout.Label( weapons[activeWeaponIndex].GetStatus() );
+	}
 }
