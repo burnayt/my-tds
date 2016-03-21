@@ -74,6 +74,22 @@ public class PlayerWeaponControl : MonoBehaviour
 		
 	}
 	
+	public void TakeAmmo ( AmmoPickable ammo )
+	{
+		//Конечно можно добавить проверку, чтобы сначало для активного оружия патроны прибавлялись
+		//Но это создаст проблему только если игрок имеет 2 одинаковых оружия или оружие с одинаковым
+		//типом патронов, что ПОКА не актуально
+		foreach ( WeaponBase weapon in weapons )
+		{
+			bool isCorrectWeaponFind = weapon.TakeAmmo(ammo.caliber, ammo.amount);
+
+			if( isCorrectWeaponFind )
+			{
+				break;
+			}
+		}
+	}
+	
 	void OnGUI()
 	{
 		GUILayout.Label( weapons[activeWeaponIndex].GetStatus() );
