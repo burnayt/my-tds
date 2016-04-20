@@ -1,0 +1,124 @@
+using UnityEngine;
+using System.Collections;
+
+public class PlayerSerialization : MonoBehaviour 
+{
+	public PhotonView pView;
+
+	public PhotonPlayer photonPlayer;
+	public int pPlayerID;
+
+	public float interpolationBackInTime = 0.1f;
+	public NetworkState[] stateBuffer = new NetworkState[20];
+	public int stateCount = 0;
+
+	public struct NetworkState
+	{
+		public Vector3 position;
+		public float timestamp; 
+
+
+		public NetworkState(Vector3 newPosition, float newTimestamp)
+		{
+			position = newPosition;
+			timestamp = newTimestamp;
+		}
+	}
+	// Use this for initialization
+	void Start () 
+	{
+		
+		// Префаб Инстанцируеться  в OnJoinedRoom()
+		pView = GetComponent<PhotonView>();
+
+		photonPlayer = pView.owner;
+		pPlayerID = photonPlayer.ID;
+			
+		if( pView.isMine )
+		{
+			
+			GetComponent<AvatarInitialization>().SetAuthority();
+		}
+		else
+		{
+			
+			GetComponent<AvatarInitialization>().SetNetCopy();
+		}
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		if( pView.isMine )
+		{
+			return;
+		}
+
+		if ( stateCount == 0 )
+		{
+			return;
+		}
+
+		double currentTime = PhotonNetwork.time;
+		double interpolationTime = currentTime - interpolationBackInTime;
+
+		if( stateBuffer[0].timestamp > interpolationTime )
+		{
+			for(int i = 0; i < stateCount; ++i)
+			{
+				if( stateBuffer[i].timestamp <= interpolationTime || i == stateCount - 1 ) //if( stateBuffer[i].timestamp <= interpolationTime || i == stateCount - 1 )
+				{
+					NetworkState lhs = stateBuffer[i];
+					NetworkState rhs = stateBuffer[Mathf.Max( i-1, 0) ];
+					double length = rhs.timestamp - lhs.timestamp;
+					float t = 0f;
+					if(length > 0.0001)
+					{
+						t = (float) ( ( interpolationTime - lhs.timestamp) / length );
+					}
+
+					transform.position = Vector3.Lerp( lhs.position, rhs.position, t);
+					break;
+				}
+			}
+		}
+	}
+
+	private void BufferState(NetworkState newState)
+	{
+		for(int i = stateBuffer.Length - 1; i > 0 ; --i)
+		{
+			stateBuffer[i] = stateBuffer [ i-1 ];
+		}
+		stateBuffer[0] = newState;
+
+		stateCount = Mathf.Min( stateCount + 1, stateBuffer.Length);
+	}
+
+
+
+	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info) 
+	{
+		Vector3 position = Vector3.zero;
+
+		if( stream.isWriting )
+		{
+			position = transform.position;
+			stream.Serialize(ref position);
+
+			Vector3 rotation = transform.eulerAngles;
+			stream.Serialize(ref rotation);
+		}
+		else
+		{
+			Vector3 rotation = Vector3.zero ; 
+
+			stream.Serialize(ref position);
+			BufferState ( new NetworkState (position, (float) info.timestamp ) );
+
+			stream.Serialize(ref rotation);
+			transform.eulerAngles = rotation;
+		}
+	}
+}
