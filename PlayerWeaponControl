@@ -3,7 +3,7 @@ using System.Collections;
 
 public class PlayerWeaponControl : MonoBehaviour 
 {
-	public WeaponBase[] weapons;
+	public WeaponBase[] weapons; // Необходим проинициализировать через инспектор иначе ошибка
 	public Transform weaponSlot;
 	
 	public int activeWeaponIndex = 0;
