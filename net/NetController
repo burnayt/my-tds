@@ -1,0 +1,59 @@
+using UnityEngine;
+using System.Collections;
+
+
+public class NetController : MonoBehaviour 
+{
+	
+	
+	// Use this for initialization
+	void Start ()
+	{
+		Debug.Log ( PhotonNetwork.sendRateOnSerialize );
+
+		PhotonNetwork.sendRate = 15;
+		PhotonNetwork.sendRateOnSerialize = 15;
+
+		PhotonNetwork.ConnectUsingSettings("v1.0") ; // автоматически присоединяеться к лобби
+		// Порядок вызова:
+
+		//PhotonNetworkingMessage
+
+	}
+
+	void OnConnectedToMaster()
+	{		
+		PhotonNetwork.JoinLobby();
+	}
+
+	void OnJoinedLobby()
+	{
+		Debug.Log("JoinedLobby!");
+		//PhotonNetwork.CreateRoom(null);
+		PhotonNetwork.JoinRandomRoom();
+
+	}
+
+	void OnPhotonRandomJoinFailed()
+	{
+		Debug.Log("JoinFailed");
+		PhotonNetwork.CreateRoom(null);
+	}
+
+	void OnCreatedRoom()
+	{
+		Debug.Log("gocha!");
+		Debug.Log( PhotonNetwork.GetPing() );
+
+	}
+
+	void OnJoinedRoom()
+	{
+		PhotonNetwork.Instantiate("Player", new Vector3(15, 1 , 6), Quaternion.identity, 0);
+		if(PhotonNetwork.isMasterClient)
+		{
+			//PhotonNetwork.Instantiate("SimpleEnemy", new Vector3(10, 1 , 6), Quaternion.identity, 0);
+			PhotonNetwork.Instantiate("EvenMoreSimpleEnemy", new Vector3(10, 1 , 6), Quaternion.identity, 0);
+		}
+	}
+
