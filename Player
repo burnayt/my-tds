@@ -43,4 +43,9 @@ public class Player : MonoBehaviour
 			transform.LookAt (lookPoint);
 		}
 	}
+	
+	public void SetCamera(Camera myCam)
+	{
+		myCamera = myCam;
+	}
 }
