@@ -1,0 +1,50 @@
+using UnityEngine;
+using System.Collections;
+
+public class EnemySerialization : MonoBehaviour 
+{
+	public PhotonView pView;
+
+	private Vector3 lastReceivedPosition;
+
+	// Use this for initialization
+	void Start () 
+	{
+			pView = GetComponent<PhotonView>();
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+		if( pView.isMine )
+		{
+			return;
+		}
+
+		transform.position = Vector3.Lerp(transform.position, lastReceivedPosition, Time.deltaTime * 10f );
+	}
+
+	void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+	{
+		Vector3 position = Vector3.zero;
+		Vector3 rotation = Vector3.zero ; 
+
+		if( stream.isWriting )
+		{
+			position = transform.position;
+			stream.Serialize(ref position);
+
+			rotation = transform.eulerAngles;
+			stream.Serialize(ref rotation);
+		}
+		else
+		{
+			stream.Serialize(ref position);
+			lastReceivedPosition = position;
+
+			stream.Serialize(ref rotation);
+			transform.eulerAngles = rotation;
+		}
+	}
+
+}
