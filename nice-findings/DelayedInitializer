@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections;
-
+//Можно добавить
+// Число траев перед тем как выдать ошибку: инициализация не удалась
 public class Initializer : MonoBehaviour {
 
 	public bool isInitialized = false;
