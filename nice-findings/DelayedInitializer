@@ -1,0 +1,32 @@
+using UnityEngine;
+using System.Collections;
+
+public class Initializer : MonoBehaviour {
+
+	public bool isInitialized = false;
+	public int targetVar = 0;
+	// Use this for initialization
+	void Start () 
+	{
+		StartCoroutine("DelayedInit");
+		enabled = false;
+	}
+
+	// Update is called once per frame
+	void Update () 
+	{
+
+	}
+
+	IEnumerator DelayedInit()
+	{
+		while ( targetVar == 0 )
+		{
+			yield return new WaitForSeconds(0.5f);
+		}
+
+		Debug.Log("Done");
+		isInitialized = true;
+		enabled = true;
+	}
+}
