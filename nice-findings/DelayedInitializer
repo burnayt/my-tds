@@ -2,6 +2,11 @@ using UnityEngine;
 using System.Collections;
 //Можно добавить
 // Число траев перед тем как выдать ошибку: инициализация не удалась
+//Start is called on the frame when a script is enabled Like the Awake function, 
+//Start is called exactly once in the lifetime of the script. However, Awake is called when the script object is initialised, 
+//regardless of whether or not the script is enabled. 
+//Start may not be called on the same frame as Awake if the script is not enabled at initialisation time.
+
 public class Initializer : MonoBehaviour {
 
 	public bool isInitialized = false;
