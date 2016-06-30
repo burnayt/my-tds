@@ -21,7 +21,7 @@ public class Initializer : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
-
+		//Запуститься когда все null переменные будут инициализированны.
 	}
 
 	IEnumerator DelayedInit()
