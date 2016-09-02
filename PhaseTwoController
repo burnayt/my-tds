@@ -20,25 +20,6 @@ public class PhaseTwoController : MonoBehaviour {
 
     public RestartController restartContr;
 
-    public int TimeLeft
-    {
-        get
-        {
-            return timeLeft;
-        }
-        set
-        {
-            if( PhotonNetwork.isMasterClient )
-            {
-                myView.RPC("SetTimeLeft", PhotonTargets.All, value);
-            }
-            else
-            {
-                Debug.LogError("PhaseTwoController.timeleft can be set only on MasterClient.");
-            }
-
-        }
-    }
 
     void Awake()
     {
@@ -61,11 +42,7 @@ public class PhaseTwoController : MonoBehaviour {
         isMatchStarts = status;
     }
 
-    [PunRPC]
-    public void SetTimeLeft(int time)
-    {
-        timeLeft = time;
-    }
+    
 
 
     public void Enable()
