@@ -1,0 +1,122 @@
+using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
+
+public enum AvatarClass
+{
+    Human,
+    Zombie
+}
+
+public class AvatarRespawnController : MonoBehaviour 
+{
+    public AvatarClass aClass = AvatarClass.Human;
+
+    public Button button;
+	public Text hpIndicator;
+	public Camera myCamera;
+    public PhaseTwoController p2Contr;
+    public Text zombieStatusText;
+
+    public PhotonView pView;
+
+    public GameObject avatar;
+
+    
+    // Use this for initialization
+    void Start ()
+    {
+        /*
+        zombieStatusText.text = "Human";
+        //При загрузке уровня ВКЛЮЧЕН
+        //Работает локально для каждого клиента
+        if(p2Contr.isMatchStarts)
+        {
+            aClass = AvatarClass.Zombie;
+            zombieStatusText.text = "Zombie";
+        }
+        */
+        
+	
+	}
+	
+	// Update is called once per frame
+	void Update () 
+	{
+	
+	}
+
+	public void RespawnAvatar()
+	{
+        if( aClass == AvatarClass.Human )
+        {
+
+            avatar = PhotonNetwork.Instantiate("Avatar", new Vector3(15, 1, 6), Quaternion.identity, 0) as GameObject;
+            avatar.GetComponent<MovementController>().SetCamera(myCamera);
+            avatar.GetComponent<MovementController>().enabled = true;
+            avatar.GetComponent<WeaponController>().Enable();
+            avatar.GetComponent<AvatarEndurance>().hpIndicator = hpIndicator;
+            avatar.GetComponent<AvatarEndurance>().SetRespawnController(this);
+            myCamera.GetComponent<CameraController>().BoundToTarget(avatar.transform);
+            button.gameObject.SetActive(false);
+            
+        }
+        else
+        {
+            avatar = PhotonNetwork.Instantiate("Zombie", ChooseRespawnSpot(), Quaternion.identity, 0) as GameObject;
+            avatar.GetComponent<MovementController>().SetCamera(myCamera);
+            avatar.GetComponent<MovementController>().enabled = true;
+            avatar.GetComponent<AvatarEndurance>().hpIndicator = hpIndicator;
+            avatar.GetComponent<AvatarEndurance>().SetRespawnController(this);
+            myCamera.GetComponent<CameraController>().BoundToTarget(avatar.transform);
+
+            button.gameObject.SetActive(false);
+        }
+		
+
+		
+
+	}
+
+    private Vector3 ChooseRespawnSpot()
+    {
+        return new Vector3(15, 1, 6);
+    }
+
+	public void AvatarDeadHappen()
+	{
+        //Вызываеться на клиенте ownera аватара
+        // Вызываеться когда health аватара <= 0
+        //Осторожно! При вызове метода аватар, который его вызвал все еще существует!
+        aClass = AvatarClass.Zombie;
+        zombieStatusText.text = "Zombie";
+    }
+
+    public void OnRestarted()
+    {
+        
+    }
+   
+    [PunRPC]
+    public void SetAvatarClass(int index )
+    {
+        if(avatar !=null)
+        {
+            avatar.GetComponent<AvatarEndurance>().Dead();
+        }
+       
+        if ( index == 0 )
+        {
+            aClass = AvatarClass.Human;
+            zombieStatusText.text = "Human";
+        }
+        else if(index == 1)
+        {
+            aClass = AvatarClass.Zombie;
+            zombieStatusText.text = "Zombie";
+        }
+    }
+
+    
+    
+}
