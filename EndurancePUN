@@ -1,0 +1,67 @@
+using UnityEngine;
+using System.Collections;
+
+public class Endurance : MonoBehaviour 
+{
+	/*
+	 * Базовый класс для компонента, который
+	 * Добавляет возможность для GameObject иметь прочность
+	 * Синхронизирует по сети, но только не для объектов присутствующих в сцене изначально
+	 * Если нужно отнять прочность вызываеться BeingHitLocally(int damage)
+	 * 
+	 */
+	public int health = 100;
+	public PhotonView myPhotonView;
+	public PhotonTargets photonTargets;
+
+	// Use this for initialization
+	protected void Start () 
+	{
+		myPhotonView = GetComponent<PhotonView>();
+	}
+
+	public void BeingHitLocally(int damage)
+	{
+		myPhotonView.RPC("BeingHit", photonTargets, damage);
+
+	}
+
+	[PunRPC]
+	protected void BeingHit(int dmg)
+	{
+		health -= dmg;
+		if ( health <= 0 )
+		{
+			Dead();
+		}
+	}
+
+	protected void Dead()
+	{
+		if(myPhotonView.isMine)
+		{
+			//PhotonNetwork.Destroy(gameObject)
+		}
+
+		Debug.Log("NOOOOOOOOOO" );
+	}
+
+	public void RejuvenationLocally(int amount)
+	{
+		if( health + amount > 100 )
+		{
+			int tempHealth = 100 - health;
+			health += tempHealth;
+		}
+		else
+		{
+			health += amount;
+		}
+	}
+
+	public GameObject ReturnSelf()
+	{
+		return gameObject;
+	}
+
+}
