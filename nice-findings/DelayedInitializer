@@ -7,6 +7,8 @@ using System.Collections;
 //regardless of whether or not the script is enabled. 
 //Start may not be called on the same frame as Awake if the script is not enabled at initialisation time.
 
+Для тех целей для которых это создавалось лучше юзать OnJoinedRoom()
+
 public class Initializer : MonoBehaviour {
 
 	public bool isInitialized = false;
